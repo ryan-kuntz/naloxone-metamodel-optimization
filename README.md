@@ -2,7 +2,7 @@
 
 **Optimizing the geographic distribution of naloxone kits across Rhode Island to minimize projected opioid overdose deaths, using a machine learning metamodel trained on a stochastic microsimulation.**
 
-> **Note:** This repository is actively being transitioned from a private research codebase. Code and documentation are being added incrementally — some components (particularly the microsimulation model) are proprietary and will not be included. Check back for updates.
+> **Note:** This repository is adapted from a private research codebase. It includes the full ML/optimization pipeline; the microsimulation model itself is a separate, proprietary research codebase and isn't included — see "Reproducibility" below for exactly what that means per notebook.
 
 ---
 
@@ -19,12 +19,12 @@ This work is part of a forthcoming research paper (citation to be added upon pub
 ## Methodology
 
 ```
-Latin Hypercube        Stochastic            Neural Network         Constrained
+Sobol Sequence         Stochastic            Neural Network         Constrained
 Sampling           →   Microsimulation   →   Metamodel          →   Optimization
 (Allocation Vectors)   (Projected Deaths)    (Fast Surrogate)       (Minimize Deaths)
 ```
 
-1. **Sample Generation** — Latin hypercube sampling produces a diverse set of naloxone allocation vectors across RI's 39 cities and towns, subject to a fixed statewide budget constraint (50,000 kits).
+1. **Sample Generation** — Sobol sequence sampling (via `scipy.stats.qmc`) produces a diverse set of naloxone allocation vectors across RI's 39 cities and towns, subject to a fixed statewide budget constraint (50,000 kits).
 
 2. **Simulation** — Each allocation vector is evaluated through a calibrated stochastic microsimulation that models opioid use trajectories, overdose events, and naloxone intervention at the individual level. Simulation jobs are parallelized on an HPC cluster via SLURM.
 
@@ -50,7 +50,7 @@ The metamodel-based approach achieves performance comparable to a greedy algorit
 
 - **Simulation:** R (microsimulation model — proprietary, not included)
 - **Metamodel & Optimization:** Python (NumPy, SciPy, scikit-learn, joblib)
-- **Sampling:** Latin hypercube sampling via `pyDOE2`
+- **Sampling:** Sobol sequence sampling via `scipy.stats.qmc`
 - **Compute:** SLURM-based HPC for simulation parallelization
 - **Analysis:** Jupyter notebooks, pandas, matplotlib, seaborn
 
@@ -60,7 +60,8 @@ The metamodel-based approach achieves performance comparable to a greedy algorit
 
 ```
 ├── notebooks/
-│   ├── 01_generate_samples.ipynb         # Latin hypercube allocation sampling
+│   ├── 00_status_quo_distribution.ipynb  # Derive the current distribution baseline
+│   ├── 01_generate_samples.ipynb         # Sobol sequence allocation sampling
 │   ├── 02_obtain_simulation_outputs.ipynb # Aggregate HPC simulation results
 │   ├── 03_train_metamodel.ipynb          # Train and validate neural network surrogate
 │   ├── 04_optimize.ipynb                 # Run constrained optimization over metamodel
@@ -71,11 +72,9 @@ The metamodel-based approach achieves performance comparable to a greedy algorit
 ├── src/
 │   └── optimization.py                   # Batch optimization with SLURM integration
 │
-├── models/
-│   ├── model_weights.pkl                 # Trained metamodel weights
-│   └── scaler.pkl                        # Feature scaler for input normalization
-│
-├── scripts/                              # SLURM job submission scripts
+├── data/
+│   ├── inputs/                           # RI demographic data (real input)
+│   └── generated/                        # Sample sets and starting points produced by the notebooks
 │
 ├── results/
 │   ├── figures/                          # Visualization outputs
@@ -90,7 +89,11 @@ The metamodel-based approach achieves performance comparable to a greedy algorit
 
 The stochastic microsimulation model used to generate training data is the intellectual property of the original simulation authors and is not included in this repository. The notebooks here cover all downstream steps — metamodel training, optimization, benchmarking, and results analysis — which represent the novel methodological contributions of this work.
 
-With `seed=42`, all post-simulation steps are fully reproducible.
+Reproducibility varies by notebook, and each one states its own dependencies up front:
+
+- `01_generate_samples.ipynb` and `07_compare_results.ipynb` run fully locally with `seed=42` and the data included in this repo.
+- `00_status_quo_distribution.ipynb` depends on the microsimulation model's own input data, which lives outside this repo — it's included as a read-through of the methodology.
+- `02_obtain_simulation_outputs.ipynb`, and portions of `04_optimize.ipynb`, `05_find_optimal_solutions.ipynb`, and `06_greedy_benchmark.ipynb` depend on batch outputs from a university HPC cluster. Those cells are clearly marked and provided for documentation of the exact procedure, not local execution.
 
 ---
 
@@ -108,4 +111,4 @@ This project represents my contributions as second author on a forthcoming paper
 
 ## Status
 
-🔄 **Work in Progress** — This public repository is being assembled from a private research codebase. Components are being added as they are cleared for public release. The methodology, results, and analysis pipeline documented above are complete; the repository contents will continue to grow.
+✅ **Complete** — The ML/optimization pipeline shown here (metamodel training, optimization, benchmarking, and results analysis) is finished and reflects the methodology and results described above. The proprietary microsimulation component is intentionally excluded; see "Reproducibility" for what that means for running this repo locally.
