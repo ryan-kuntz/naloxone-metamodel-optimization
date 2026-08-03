@@ -17,3 +17,9 @@ preliminary calibration
 *.png
 *.csv
 Inputs/Calib*
+
+# Exceptions: verified byte-identical to the public pph-collective/profound-model
+# repo, so these are safe to include (see root .gitignore for what's still excluded)
+!Inputs/InitialPopulation.rds
+!calibration/CalibratedData.rds
+!calibration/CalibratedSeed.rds

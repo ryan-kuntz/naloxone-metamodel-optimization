@@ -19,9 +19,14 @@ data/generated/naloxone_kit_distributions.csv
 data/generated/simulation_training_data.csv
 models/
 
-# R model source is public; RI-specific study data and calibration results are not
-R_Files/Inputs/
-R_Files/calibration/
+# Verified against the public pph-collective/profound-model repo (byte-identical
+# hash match): calibration/, ProgramData.xlsx, and InitialPopulation.rds are
+# already public and included below. MasterTable.xlsx is NOT included there —
+# the public version only has data through 2019, this one goes through 2023
+# with updated values — so it stays excluded, along with files that don't
+# exist in the public repo at all.
+R_Files/Inputs/MasterTable.xlsx
+R_Files/Inputs/init_pop.rds
 R_Files/ODdeaths.xlsx
 R_Files/.Rhistory
 R_Files/.Rproj.user/
