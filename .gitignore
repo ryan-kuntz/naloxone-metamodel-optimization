@@ -18,3 +18,10 @@ data/generated/naloxone_kit_distributions.csv
 # Large real training data, and trained model artifacts (not cleared for public release)
 data/generated/simulation_training_data.csv
 models/
+
+# R model source is public; RI-specific study data and calibration results are not
+R_Files/Inputs/
+R_Files/calibration/
+R_Files/ODdeaths.xlsx
+R_Files/.Rhistory
+R_Files/.Rproj.user/

@@ -2,7 +2,7 @@
 
 **Optimizing the geographic distribution of naloxone kits across Rhode Island to minimize projected opioid overdose deaths, using a machine learning metamodel trained on a stochastic microsimulation.**
 
-> **Note:** This repository is adapted from a private research codebase. It includes the full ML/optimization pipeline; the microsimulation model itself is a separate, proprietary research codebase and isn't included — see "Reproducibility" below for exactly what that means per notebook.
+> **Note:** This repository is adapted from a private research codebase. It includes the full ML/optimization pipeline and the microsimulation model's source code (`R_Files/`, cleared for public release by the model's original authors). The Rhode-Island-specific study data and calibration results are not included, since they represent unpublished findings ahead of the associated paper — see "Reproducibility" below for exactly what that means per notebook.
 
 ---
 
@@ -48,7 +48,7 @@ The metamodel-based approach achieves performance comparable to a greedy algorit
 
 ## Technical Stack
 
-- **Simulation:** R (microsimulation model — proprietary, not included)
+- **Simulation:** R (microsimulation model, `R_Files/` — source included; study-specific input/calibration data is not, see "Reproducibility")
 - **Metamodel & Optimization:** Python (NumPy, SciPy, scikit-learn, joblib)
 - **Sampling:** Sobol sequence sampling via `scipy.stats.qmc`
 - **Compute:** SLURM-based HPC for simulation parallelization
@@ -72,6 +72,8 @@ The metamodel-based approach achieves performance comparable to a greedy algorit
 ├── src/
 │   └── optimization.py                   # Batch optimization with SLURM integration
 │
+├── R_Files/                               # Microsimulation model source (R) — see Reproducibility
+│
 ├── data/
 │   ├── inputs/                           # RI demographic data (real input)
 │   └── generated/                        # Sample sets and starting points produced by the notebooks
@@ -87,12 +89,12 @@ The metamodel-based approach achieves performance comparable to a greedy algorit
 
 ## Reproducibility
 
-The stochastic microsimulation model used to generate training data is the intellectual property of the original simulation authors and is not included in this repository. The notebooks here cover all downstream steps — metamodel training, optimization, benchmarking, and results analysis — which represent the novel methodological contributions of this work.
+The microsimulation model's source code (`R_Files/`) is included, with permission from its original authors. What's *not* included is the Rhode-Island-specific study data that feeds it — historical distribution records, population inputs, and the fitted calibration results — since those represent unpublished findings ahead of the associated paper, rather than reusable model code. The notebooks here cover all downstream steps — metamodel training, optimization, benchmarking, and results analysis — which represent the novel methodological contributions of this work.
 
 Reproducibility varies by notebook, and each one states its own dependencies up front:
 
 - `01_generate_samples.ipynb` and `07_compare_results.ipynb` run fully locally with `seed=42` and the data included in this repo.
-- `00_status_quo_distribution.ipynb` depends on the microsimulation model's own input data, which lives outside this repo — it's included as a read-through of the methodology.
+- `00_status_quo_distribution.ipynb` depends on the microsimulation model's Rhode-Island-specific input data (not included, see above) — it's included as a read-through of the methodology.
 - `02_obtain_simulation_outputs.ipynb`, and portions of `04_optimize.ipynb`, `05_find_optimal_solutions.ipynb`, and `06_greedy_benchmark.ipynb` depend on batch outputs from a university HPC cluster. Those cells are clearly marked and provided for documentation of the exact procedure, not local execution.
 
 ---
@@ -111,4 +113,4 @@ This project represents my contributions as second author on a forthcoming paper
 
 ## Status
 
-✅ **Complete** — The ML/optimization pipeline shown here (metamodel training, optimization, benchmarking, and results analysis) is finished and reflects the methodology and results described above. The proprietary microsimulation component is intentionally excluded; see "Reproducibility" for what that means for running this repo locally.
+✅ **Complete** — The ML/optimization pipeline shown here (metamodel training, optimization, benchmarking, and results analysis), along with the microsimulation model's source code, is finished and reflects the methodology and results described above. The Rhode-Island-specific study data and calibration results are intentionally excluded, pending publication; see "Reproducibility" for what that means for running this repo locally.
